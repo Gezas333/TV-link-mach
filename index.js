@@ -13,10 +13,10 @@ const manifest = {
 
 const builder = new addonBuilder(manifest);
 
+// META
 builder.defineMetaHandler(async (args) => {
-    let movieName = args.id || "";
-
-    const movieQuery = movieName.split(" ").join("+");
+    const movieName = args.id || "";
+    const movieQuery = movieName.replace(/\s+/g, "+");
 
     const searchUrl = `https://torrent.ai/lt/torrents=${movieQuery}`;
 
@@ -35,9 +35,14 @@ builder.defineMetaHandler(async (args) => {
     };
 });
 
+// STREAM (empty)
 builder.defineStreamHandler(() => {
     return { streams: [] };
 });
 
-// SVARBU – eksportuojame tik Vercel handlerį
-module.exports = builder.getInterface();
+// ❗ VERY IMPORTANT — Vercel handler
+const addonInterface = builder.getInterface();
+
+module.exports = (req, res) => {
+    addonInterface.serveHTTP(req, res);
+};
