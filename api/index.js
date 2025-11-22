@@ -13,7 +13,7 @@ const manifest = {
 
 const builder = new addonBuilder(manifest);
 
-// META
+// META handler
 builder.defineMetaHandler(async (args) => {
     const movieName = args.id || "";
     const movieQuery = movieName.replace(/\s+/g, "+");
@@ -35,14 +35,14 @@ builder.defineMetaHandler(async (args) => {
     };
 });
 
-// STREAM (empty)
+// STREAM handler
 builder.defineStreamHandler(() => {
     return { streams: [] };
 });
 
-// ❗ VERY IMPORTANT — Vercel handler
 const addonInterface = builder.getInterface();
 
+// Vercel serverless entry
 module.exports = (req, res) => {
     addonInterface.serveHTTP(req, res);
 };
