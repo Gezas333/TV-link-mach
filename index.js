@@ -14,14 +14,10 @@ const manifest = {
 const builder = new addonBuilder(manifest);
 
 builder.defineMetaHandler(async (args) => {
-
-    // filmo pavadinimas iš IMDB ID (arba kito ID)
     let movieName = args.id || "";
 
-    // Konvertuojame tarpus į +
     const movieQuery = movieName.split(" ").join("+");
 
-    // TV Bro URL
     const searchUrl = `https://torrent.ai/lt/torrents=${movieQuery}`;
 
     return {
@@ -29,8 +25,6 @@ builder.defineMetaHandler(async (args) => {
             id: args.id,
             type: "movie",
             name: movieName,
-
-            // Mūsų custom mygtukas
             links: [
                 {
                     name: "Search on Page",
@@ -41,18 +35,9 @@ builder.defineMetaHandler(async (args) => {
     };
 });
 
-// Būtina nurodyti tuščius stream
 builder.defineStreamHandler(() => {
     return { streams: [] };
 });
 
+// SVARBU – eksportuojame tik Vercel handlerį
 module.exports = builder.getInterface();
-
-if (!module.parent) {
-    const http = require("http");
-    http.createServer((req, res) => {
-        builder.getInterface().serveHTTP(req, res);
-    }).listen(7000);
-
-    console.log("Addon running on http://localhost:7000/manifest.json");
-}
