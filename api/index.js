@@ -6,6 +6,9 @@ const manifest = {
     name: "Search on Page (TV Bro)",
     description: "Prideda mygtuką filmams Stremio, kuris atidaro TV Bro su paieška puslapis.ai",
     logo: "https://stremio.com/asset/logo-small.png",
+
+    catalogs: [], // ← būtina, net jei katalogų nėra
+
     resources: ["stream", "meta"],
     types: ["movie"],
     idPrefixes: ["tt"]
@@ -13,7 +16,6 @@ const manifest = {
 
 const builder = new addonBuilder(manifest);
 
-// META handler
 builder.defineMetaHandler(async (args) => {
     const movieName = args.id || "";
     const movieQuery = movieName.replace(/\s+/g, "+");
@@ -35,14 +37,12 @@ builder.defineMetaHandler(async (args) => {
     };
 });
 
-// STREAM handler
 builder.defineStreamHandler(() => {
     return { streams: [] };
 });
 
 const addonInterface = builder.getInterface();
 
-// Vercel serverless entry
 module.exports = (req, res) => {
     addonInterface.serveHTTP(req, res);
 };
